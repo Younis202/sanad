@@ -21,19 +21,58 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 ```text
 artifacts-monorepo/
 ├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
+│   ├── api-server/         # Express API server
+│   └── sanad-health/       # سَنَد React+Vite frontend (at /)
 ├── lib/                    # Shared libraries
 │   ├── api-spec/           # OpenAPI spec + Orval codegen config
 │   ├── api-client-react/   # Generated React Query hooks
 │   ├── api-zod/            # Generated Zod schemas from OpenAPI
 │   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+├── scripts/                # Utility scripts
+│   └── src/seed-sanad.ts   # Seeds 50 dummy patients
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+└── package.json
 ```
+
+## SANAD Health System
+
+**Project**: سَنَد - Saudi Arabia National Health Infrastructure Platform
+
+### Pages
+- `/` — Landing page (Home)
+- `/emergency` — Paramedic interface (emergency critical data)
+- `/physician` — Physician dashboard (full medical history + drug interaction checker)
+- `/citizen` — Citizen health dashboard (health score, AI alerts, vaccinations)
+- `/admin` — System admin stats
+
+### API Routes (all under `/api`)
+- `GET /api/healthz` — Health check
+- `GET /api/patients` — List all patients
+- `GET /api/patients/:nationalId` — Full patient record
+- `GET /api/emergency/:nationalId` — Emergency critical data only
+- `GET /api/physician/:nationalId` — Physician dashboard with drug alerts
+- `POST /api/medications/check-interaction` — Drug interaction checker
+- `GET /api/citizen/:nationalId` — Citizen dashboard
+- `GET /api/ai/predictions/:nationalId` — AI health predictions
+- `GET /api/stats` — System-wide statistics
+
+### Demo Patient
+- National ID: `1234567890` (Ahmed Al-Shammari)
+- Has: diabetes, hypertension, penicillin allergy, 3 medications, 4 medical records, 5 lab results
+
+### Database Schema
+- `patients` — Main patient table with arrays for allergies & chronic conditions
+- `emergency_contacts` — Emergency contact persons
+- `medications` — Current prescriptions
+- `medical_records` — Visit history across hospitals
+- `lab_results` — Lab test results with status (normal/high/low)
+- `vaccinations` — Vaccination records
+
+### Seed Data
+Run: `pnpm --filter @workspace/scripts run seed-sanad`
+Seeds 50 Saudi dummy patients with realistic Arabic names, medical data
 
 ## TypeScript & Composite Projects
 
@@ -56,41 +95,43 @@ Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` 
 
 - Entry: `src/index.ts` — reads `PORT`, starts Express
 - App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
+- Routes: `src/routes/index.ts` mounts sub-routers
 - Depends on: `@workspace/db`, `@workspace/api-zod`
 - `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+- `pnpm --filter @workspace/api-server run build` — production esbuild bundle
+
+### `artifacts/sanad-health` (`@workspace/sanad-health`)
+
+React + Vite frontend for SANAD. RTL Arabic UI, served at `/`.
+
+- Packages: lucide-react, framer-motion, recharts, date-fns, tailwind-merge, clsx
+- All pages use Arabic RTL layout
 
 ### `lib/db` (`@workspace/db`)
 
 Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
 
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
+- `src/schema/patients.ts` — patients table
+- `src/schema/emergency-contacts.ts` — emergency contacts
+- `src/schema/medications.ts` — prescriptions
+- `src/schema/medical-records.ts` — visit history
+- `src/schema/lab-results.ts` — lab test results
+- `src/schema/vaccinations.ts` — vaccination records
 
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
+Production migrations are handled by Replit when publishing. In development, we use `pnpm --filter @workspace/db run push`.
 
 ### `lib/api-spec` (`@workspace/api-spec`)
 
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
+Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Run codegen: `pnpm --filter @workspace/api-spec run codegen`
 
 ### `lib/api-zod` (`@workspace/api-zod`)
 
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
+Generated Zod schemas from the OpenAPI spec. Used by `api-server` for response validation.
 
 ### `lib/api-client-react` (`@workspace/api-client-react`)
 
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
+Generated React Query hooks and fetch client from the OpenAPI spec.
 
 ### `scripts` (`@workspace/scripts`)
 
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+Utility scripts. Run: `pnpm --filter @workspace/scripts run seed-sanad`

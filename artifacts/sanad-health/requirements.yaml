@@ -1,0 +1,19 @@
+packages:
+  "framer-motion": "For page transitions, stunning entry animations, and interactive elements"
+  "recharts": "For the citizen health score and lab result charts"
+  "date-fns": "For formatting medical record dates"
+  "lucide-react": "For crisp, modern icons across all interfaces"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for intelligently merging tailwind classes"
+
+images:
+  - path: "artifacts/sanad-health/public/images/hero-medical.png"
+    description: "Abstract high-end medical technology background, cyan and deep blue gradients, glowing connecting nodes, clean white space, very premium healthcare aesthetic suitable for a national platform"
+    aspect_ratio: "16:9"
+  - path: "artifacts/sanad-health/public/images/saudi-vision.png"
+    description: "Abstract representation of digital healthcare, futuristic green and cyan geometric patterns on a light background, premium subtle aesthetic"
+    aspect_ratio: "16:9"
+
+notes:
+  - The application is primarily in Arabic (RTL layout). HTML dir="rtl" is required.
+  - Using API hooks imported directly from @workspace/api-client-react as per implementation notes.
