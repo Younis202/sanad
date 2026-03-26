@@ -1,49 +1,35 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
-import Home from "@/pages/home";
-import Emergency from "@/pages/emergency";
-import Physician from "@/pages/physician";
-import Citizen from "@/pages/citizen";
-import Admin from "@/pages/admin";
+import { Router, Route, Switch } from "wouter";
+import Sidebar from "./components/system/Sidebar";
+import HomePage from "./contexts/home";
+import EmergencyContext from "./contexts/emergency/page";
+import ClinicalDashboard from "./contexts/clinical/dashboard";
+import CitizenContext from "./contexts/citizen/page";
+import NationalDashboard from "./contexts/national/dashboard";
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-    },
-  },
-});
+const base = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 
-function Router() {
+export default function App() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/emergency" component={Emergency} />
-      <Route path="/physician" component={Physician} />
-      <Route path="/citizen" component={Citizen} />
-      <Route path="/admin" component={Admin} />
-      <Route component={NotFound} />
-    </Switch>
+    <Router base={base}>
+      <div className="flex min-h-screen" style={{ direction: "rtl" }}>
+        <Sidebar />
+        <main className="flex-1 flex flex-col overflow-x-hidden min-w-0">
+          <Switch>
+            <Route path="/" component={HomePage} />
+            <Route path="/emergency" component={EmergencyContext} />
+            <Route path="/clinical/dashboard" component={ClinicalDashboard} />
+            <Route path="/citizen" component={CitizenContext} />
+            <Route path="/national/dashboard" component={NationalDashboard} />
+            <Route>
+              <div className="flex flex-col items-center justify-center h-64 gap-4 text-neutral-400">
+                <div className="text-6xl">🔍</div>
+                <div className="text-xl font-bold">الصفحة غير موجودة</div>
+                <a href="/" className="text-sm underline text-cyan-600">العودة للرئيسية</a>
+              </div>
+            </Route>
+          </Switch>
+        </main>
+      </div>
+    </Router>
   );
 }
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-}
-
-export default App;
