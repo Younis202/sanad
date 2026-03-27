@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "fkW3UWEskpkDUPBQimus7"
+uri = "file://FRONTEND.md"
+type = "text"
+title = "Frontend — هيكل الفرونت إند"
+
+[[outputs]]
+id = "ByhegC0hwDLV6y_fFgl8y"
+uri = "file://BACKEND.md"
+type = "text"
+title = "Backend — هيكل الباك إند"
