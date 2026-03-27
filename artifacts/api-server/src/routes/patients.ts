@@ -12,7 +12,7 @@ import { eq } from "drizzle-orm";
 
 const router: IRouter = Router();
 
-router.get("/patients", async (_req, res) => {
+router.get("/patients", async (req, res) => {
   try {
     const patients = await db.select().from(patientsTable);
     res.json(patients.map((p) => ({

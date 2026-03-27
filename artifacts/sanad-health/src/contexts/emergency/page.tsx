@@ -216,7 +216,6 @@ export default function EmergencyContext() {
         )}
       </div>
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <AuditFooter context="Emergency" />
     </div>
   );
