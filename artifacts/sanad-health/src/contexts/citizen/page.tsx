@@ -4,263 +4,303 @@ import { api } from "../../lib/api/client";
 import AuditFooter from "../../components/system/AuditFooter";
 import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
-interface AiAlert {
-  conditionAr: string;
-  probability: number;
-  severity: string;
-  actionRequiredAr: string;
-  timeframe: string;
-}
-
-interface LabResult {
-  id: number;
-  testNameAr: string;
-  value: string;
-  unit: string;
-  status: string;
-  date: string;
-  normalRange: string;
-}
-
-interface Medication {
-  nameAr: string;
-  dosage: string;
-  frequency: string;
-  hospital: string;
-}
-
-interface Visit {
-  id: number;
-  date: string;
-  hospitalAr: string;
-  diagnosisAr: string;
-  type: string;
-}
-
-interface Vaccination {
-  nameAr: string;
-  status: string;
-  nextDue: string | null;
-}
-
-type DashboardData = {
+type DashData = {
   healthScore: number;
-  patient: { nameAr: string; nationalId: string; bloodType: string; city: string };
-  aiAlerts: AiAlert[];
-  labResults: LabResult[];
-  currentMedications: Medication[];
-  recentVisits: Visit[];
-  upcomingVaccinations: Vaccination[];
+  patient: { nameAr: string; nationalId: string; bloodType: string; city: string; phone: string };
+  aiAlerts: { conditionAr: string; probability: number; severity: string; actionRequiredAr: string; timeframe: string }[];
+  labResults: { id: number; testNameAr: string; value: string; unit: string; status: string; date: string; normalRange: string }[];
+  currentMedications: { nameAr: string; dosage: string; frequency: string; hospital: string }[];
+  recentVisits: { id: number; date: string; hospitalAr: string; diagnosisAr: string; type: string }[];
+  upcomingVaccinations: { nameAr: string; status: string; nextDue: string | null }[];
 };
 
 export default function CitizenContext() {
   const store = useCitizenStore();
 
-  async function load() {
-    store.setLoading(true);
-    store.setError(null);
-    try {
-      const data = await api.citizen.dashboard(store.nationalId) as DashboardData;
-      store.setDashboard(data as {
-        healthScore: number;
-        patient: Record<string, unknown>;
-        recentVisits: unknown[];
-        currentMedications: unknown[];
-        aiAlerts: unknown[];
-        labResults: unknown[];
-        upcomingVaccinations: unknown[];
-      });
-    } catch (e: unknown) {
-      store.setError(e instanceof Error ? e.message : "خطأ");
-    } finally {
-      store.setLoading(false);
-    }
-  }
+  useEffect(() => {
+    (async () => {
+      store.setLoading(true);
+      store.setError(null);
+      try {
+        const data = await api.citizen.dashboard(store.nationalId) as DashData;
+        store.setDashboard({
+          healthScore: data.healthScore,
+          patient: data.patient as Record<string, unknown>,
+          recentVisits: data.recentVisits,
+          currentMedications: data.currentMedications,
+          aiAlerts: data.aiAlerts,
+          labResults: data.labResults,
+          upcomingVaccinations: data.upcomingVaccinations,
+        });
+      } catch (e: unknown) {
+        store.setError(e instanceof Error ? e.message : "خطأ");
+      } finally {
+        store.setLoading(false);
+      }
+    })();
+  }, []);
 
-  useEffect(() => { load(); }, []);
-
-  const patient = store.patient as DashboardData["patient"] | null;
-  const aiAlerts = store.aiAlerts as AiAlert[];
-  const labs = store.labResults as LabResult[];
-  const meds = store.currentMedications as Medication[];
-  const visits = store.recentVisits as Visit[];
-  const vaccines = store.upcomingVaccinations as Vaccination[];
+  const patient = store.patient as DashData["patient"] | null;
+  const aiAlerts = store.aiAlerts as DashData["aiAlerts"];
+  const labs = store.labResults as DashData["labResults"];
+  const meds = store.currentMedications as DashData["currentMedications"];
+  const visits = store.recentVisits as DashData["recentVisits"];
+  const vaccines = store.upcomingVaccinations as DashData["upcomingVaccinations"];
   const score = store.healthScore;
 
-  const severityColor: Record<string, string> = {
-    high: "var(--color-critical)",
-    medium: "var(--color-warning)",
-    low: "var(--color-success)",
+  const SEVERITY_CFG: Record<string, { bar: string; label: string; cardClass: string }> = {
+    high:   { bar: "var(--critical-500)", label: "خطر مرتفع", cardClass: "card-critical" },
+    medium: { bar: "var(--warning-500)",  label: "خطر متوسط", cardClass: "card-warning"  },
+    low:    { bar: "var(--success-500)",  label: "خطر منخفض", cardClass: "card-success"  },
+  };
+
+  const VISIT_TYPE: Record<string, string> = {
+    emergency: "badge-critical",
+    inpatient:  "badge-warning",
+    outpatient: "badge-info",
+    default:    "badge-neutral",
   };
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-neutral-200 bg-white">
-        <h1 className="text-xl font-black text-neutral-900 flex items-center gap-2">
-          <span>❤️</span> لوحة صحتي
-        </h1>
-        <p className="text-sm text-neutral-500 mt-0.5">ملفك الصحي الشخصي الموحد</p>
+      <div
+        className="px-6 py-4"
+        style={{ background: "var(--card-bg)", borderBottom: "1px solid var(--n-150)" }}
+      >
+        <div className="text-h2" style={{ color: "var(--n-900)" }}>لوحة الصحة الشخصية</div>
+        <div className="text-small mt-0.5" style={{ color: "var(--n-400)" }}>
+          Citizen Health Dashboard · ملفك الصحي الموحد
+        </div>
       </div>
 
       {store.loading && <LoadingSpinner label="جاري تحميل ملفك الصحي..." />}
 
       {patient && score !== null && !store.loading && (
         <div className="flex-1 p-6 space-y-6">
-          {/* Welcome + Health Score */}
-          <div className="grid grid-cols-3 gap-4">
+
+          {/* Top Row: Identity + Health Score */}
+          <div className="grid gap-4" style={{ gridTemplateColumns: "1fr 200px" }}>
+            {/* Identity */}
             <div
-              className="col-span-2 p-6 rounded-2xl text-white"
-              style={{ background: `linear-gradient(135deg, var(--sanad-teal), var(--sanad-teal-dark))` }}
+              className="rounded-xl p-6 flex items-center gap-5"
+              style={{
+                background: "linear-gradient(135deg, var(--n-900) 0%, var(--brand-900) 100%)",
+                border: "1px solid var(--n-800)",
+              }}
             >
-              <div className="text-sm opacity-80 mb-1">مرحباً،</div>
-              <div className="text-3xl font-black mb-2">{patient.nameAr}</div>
-              <div className="flex items-center gap-4 text-sm opacity-80">
-                <span>🩸 {patient.bloodType}</span>
-                <span>📍 {patient.city}</span>
-                <span className="font-mono text-xs">{patient.nationalId}</span>
+              <div
+                className="rounded-xl flex items-center justify-center font-black flex-shrink-0"
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  background: "rgba(255,255,255,0.1)",
+                  fontSize: "24px",
+                  color: "white",
+                }}
+              >
+                {patient.nameAr.charAt(0)}
+              </div>
+              <div>
+                <div className="font-black" style={{ fontSize: "22px", color: "white", letterSpacing: "-0.3px" }}>
+                  {patient.nameAr}
+                </div>
+                <div className="flex items-center gap-3 mt-1.5">
+                  <span className="font-mono text-small" style={{ color: "rgba(255,255,255,0.45)", letterSpacing: "1px" }}>
+                    {patient.nationalId}
+                  </span>
+                  <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+                  <span className="text-small" style={{ color: "rgba(255,255,255,0.55)" }}>{patient.city}</span>
+                  <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+                  <span
+                    className="badge badge-critical-solid"
+                    style={{ background: "var(--critical-600)" }}
+                  >
+                    {patient.bloodType}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="sanad-card p-5 rounded-2xl flex flex-col items-center justify-center text-center">
-              <div className="text-xs text-neutral-500 mb-2">المؤشر الصحي العام</div>
+            {/* Health Score */}
+            <div className="card rounded-xl flex flex-col items-center justify-center p-5 text-center">
+              <div className="text-label mb-2">المؤشر الصحي</div>
               <div
-                className="text-5xl font-black leading-none mb-1"
+                className="font-black leading-none"
                 style={{
-                  color: score >= 80 ? "var(--color-success)" : score >= 60 ? "var(--color-warning)" : "var(--color-critical)",
+                  fontSize: "52px",
+                  letterSpacing: "-2px",
+                  color: score >= 80 ? "var(--success-600)" : score >= 60 ? "var(--warning-600)" : "var(--critical-600)",
                 }}
               >
                 {score}
               </div>
-              <div className="text-xs text-neutral-400">من 100</div>
-              <div className="w-full bg-neutral-100 rounded-full h-2 mt-3 overflow-hidden">
+              <div className="text-caption mt-1" style={{ color: "var(--n-400)" }}>من 100</div>
+              <div className="progress-track w-full mt-3">
                 <div
-                  className="h-full rounded-full transition-all"
+                  className="progress-fill"
                   style={{
                     width: `${score}%`,
-                    background: score >= 80 ? "var(--color-success)" : score >= 60 ? "var(--color-warning)" : "var(--color-critical)",
+                    background: score >= 80 ? "var(--success-500)" : score >= 60 ? "var(--warning-500)" : "var(--critical-500)",
                   }}
                 />
               </div>
             </div>
           </div>
 
-          {/* AI Alerts */}
+          {/* AI Risk Alerts */}
           {aiAlerts.length > 0 && (
-            <div className="space-y-3">
-              <h2 className="font-bold text-neutral-800 flex items-center gap-2">
-                <span>🧠</span> تنبيهات سَنَد الذكية
-              </h2>
-              <div className="grid grid-cols-1 gap-3">
-                {aiAlerts.map((alert, i) => (
-                  <div
-                    key={i}
-                    className="p-4 rounded-2xl border flex items-start gap-4"
-                    style={{
-                      background: alert.severity === "high"
-                        ? "var(--color-critical-bg)"
-                        : alert.severity === "medium"
-                        ? "var(--color-warning-bg)"
-                        : "var(--color-info-bg)",
-                      borderColor: alert.severity === "high"
-                        ? "var(--color-critical-border)"
-                        : alert.severity === "medium"
-                        ? "var(--color-warning-border)"
-                        : "var(--color-info-border)",
-                    }}
-                  >
-                    <div className="text-2xl">
-                      {alert.severity === "high" ? "🚨" : alert.severity === "medium" ? "⚠️" : "💡"}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-bold text-neutral-800">{alert.conditionAr}</div>
-                      <div className="text-sm text-neutral-600 mt-1">احتمالية: {Math.round(alert.probability * 100)}%</div>
-                      <div className="text-xs text-neutral-500">⏱ {alert.timeframe}</div>
-                      <div
-                        className="mt-2 text-xs font-semibold px-3 py-1.5 rounded-lg inline-block"
-                        style={{ background: severityColor[alert.severity] ?? "#64748b", color: "white" }}
-                      >
+            <div>
+              <div className="text-h3 mb-3" style={{ color: "var(--n-800)" }}>
+                تنبيهات المخاطر الاستباقية
+              </div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+                {aiAlerts.map((alert, i) => {
+                  const cfg = SEVERITY_CFG[alert.severity] ?? SEVERITY_CFG.low;
+                  const pct = Math.round(alert.probability * 100);
+                  return (
+                    <div key={i} className={`${cfg.cardClass} rounded-xl p-4 space-y-3`}>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="font-semibold text-sm" style={{ color: "var(--n-800)" }}>
+                          {alert.conditionAr}
+                        </div>
+                        <span className={`badge ${alert.severity === "high" ? "badge-critical" : alert.severity === "medium" ? "badge-warning" : "badge-success"} flex-shrink-0`}>
+                          {cfg.label}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-caption" style={{ color: "var(--n-400)" }}>الاحتمالية</span>
+                          <span className="font-mono text-small font-semibold" style={{ color: cfg.bar }}>{pct}%</span>
+                        </div>
+                        <div className="progress-track">
+                          <div className="progress-fill" style={{ width: `${pct}%`, background: cfg.bar }} />
+                        </div>
+                      </div>
+                      <div className="text-small" style={{ color: "var(--n-600)" }}>
                         الإجراء: {alert.actionRequiredAr}
                       </div>
+                      <div className="text-caption" style={{ color: "var(--n-400)" }}>
+                        الإطار: {alert.timeframe}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-6">
+          {/* Middle Row: Visits + Medications */}
+          <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr" }}>
             {/* Recent Visits */}
-            <div className="space-y-3">
-              <h2 className="font-bold text-neutral-800 flex items-center gap-2">
-                <span>📋</span> آخر الزيارات
-              </h2>
-              <div className="space-y-2">
-                {visits.slice(0, 4).map((v, i) => (
-                  <div key={i} className="sanad-card p-3 rounded-xl">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <div className="font-semibold text-neutral-800 text-sm">{v.diagnosisAr}</div>
-                        <div className="text-xs text-neutral-500 mt-0.5">{v.hospitalAr}</div>
-                      </div>
-                      <div className="text-xs font-mono text-neutral-400 flex-shrink-0">{v.date}</div>
-                    </div>
-                  </div>
-                ))}
+            <div>
+              <div className="text-h3 mb-3" style={{ color: "var(--n-800)" }}>آخر الزيارات</div>
+              <div className="card rounded-xl overflow-hidden">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>التشخيص</th>
+                      <th>المنشأة</th>
+                      <th>التاريخ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visits.slice(0, 5).map((v) => (
+                      <tr key={v.id}>
+                        <td className="font-medium">{v.diagnosisAr}</td>
+                        <td>
+                          <span className="text-small" style={{ color: "var(--n-500)" }}>{v.hospitalAr}</span>
+                        </td>
+                        <td>
+                          <span className="font-mono text-small" style={{ color: "var(--n-400)" }}>{v.date}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            {/* Current Medications */}
-            <div className="space-y-3">
-              <h2 className="font-bold text-neutral-800 flex items-center gap-2">
-                <span>💊</span> الأدوية الحالية
-              </h2>
-              <div className="space-y-2">
-                {meds.map((m, i) => (
-                  <div key={i} className="sanad-card p-3 rounded-xl">
-                    <div className="font-semibold text-neutral-800 text-sm">{m.nameAr}</div>
-                    <div className="text-xs text-neutral-500 mt-0.5">{m.dosage} — {m.frequency}</div>
-                    <div className="text-xs text-neutral-400 mt-0.5">{m.hospital}</div>
-                  </div>
-                ))}
+            {/* Medications */}
+            <div>
+              <div className="text-h3 mb-3" style={{ color: "var(--n-800)" }}>الأدوية الحالية</div>
+              <div className="card rounded-xl overflow-hidden">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>الدواء</th>
+                      <th>الجرعة</th>
+                      <th>المنشأة</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {meds.map((m, i) => (
+                      <tr key={i}>
+                        <td className="font-medium">{m.nameAr}</td>
+                        <td><span className="font-mono text-small">{m.dosage}</span></td>
+                        <td><span className="text-small" style={{ color: "var(--n-400)" }}>{m.hospital}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
 
           {/* Lab Results */}
-          <div className="space-y-3">
-            <h2 className="font-bold text-neutral-800 flex items-center gap-2">
-              <span>🔬</span> آخر التحاليل
-            </h2>
-            <div className="grid grid-cols-3 gap-3">
-              {labs.slice(0, 6).map((lab, i) => (
+          <div>
+            <div className="text-h3 mb-3" style={{ color: "var(--n-800)" }}>آخر التحاليل المخبرية</div>
+            <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>
+              {labs.slice(0, 6).map((lab) => (
                 <div
-                  key={i}
-                  className={`p-4 rounded-xl ${lab.status === "normal" ? "sanad-card-success" : "sanad-card-critical"}`}
+                  key={lab.id}
+                  className={`rounded-xl p-4 ${lab.status === "normal" ? "card-success" : "card-critical"}`}
                 >
-                  <div className="text-xs text-neutral-600 mb-1">{lab.testNameAr}</div>
-                  <div className="text-xl font-black text-neutral-900">{lab.value} <span className="text-xs font-normal text-neutral-500">{lab.unit}</span></div>
-                  <div className="text-xs text-neutral-500 mt-1">معدل: {lab.normalRange}</div>
-                  <span className={`badge mt-2 text-[10px] ${lab.status === "normal" ? "badge-success" : "badge-critical"}`}>
-                    {lab.status === "normal" ? "طبيعي" : "مرتفع"}
-                  </span>
+                  <div className="text-small font-medium mb-2" style={{ color: "var(--n-600)" }}>
+                    {lab.testNameAr}
+                  </div>
+                  <div>
+                    <span
+                      className="font-black font-mono"
+                      style={{
+                        fontSize: "22px",
+                        color: lab.status === "normal" ? "var(--success-700)" : "var(--critical-700)",
+                        letterSpacing: "-0.5px",
+                      }}
+                    >
+                      {lab.value}
+                    </span>
+                    <span className="text-small mr-1" style={{ color: "var(--n-400)" }}>{lab.unit}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-caption" style={{ color: "var(--n-400)" }}>
+                      معدل: {lab.normalRange}
+                    </span>
+                    <span className={`badge ${lab.status === "normal" ? "badge-success" : "badge-critical"}`}>
+                      {lab.status === "normal" ? "طبيعي" : "مرتفع"}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Vaccinations */}
+          {/* Upcoming Vaccinations */}
           {vaccines.length > 0 && (
-            <div className="space-y-3">
-              <h2 className="font-bold text-neutral-800 flex items-center gap-2">
-                <span>💉</span> التطعيمات المطلوبة
-              </h2>
-              <div className="grid grid-cols-3 gap-3">
+            <div>
+              <div className="text-h3 mb-3" style={{ color: "var(--n-800)" }}>التطعيمات المطلوبة</div>
+              <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))" }}>
                 {vaccines.map((v, i) => (
-                  <div key={i} className="sanad-card-warning p-4 rounded-xl">
-                    <div className="font-semibold text-amber-800 text-sm">{v.nameAr}</div>
-                    {v.nextDue && <div className="text-xs text-amber-600 mt-1">موعد الجرعة: {v.nextDue}</div>}
-                    <span className="badge badge-warning text-[10px] mt-2">مطلوب</span>
+                  <div key={i} className="card-warning rounded-xl p-4">
+                    <div className="font-semibold text-sm" style={{ color: "var(--warning-800)" }}>
+                      {v.nameAr}
+                    </div>
+                    {v.nextDue && (
+                      <div className="text-small mt-1" style={{ color: "var(--warning-600)" }}>
+                        الجرعة القادمة: {v.nextDue}
+                      </div>
+                    )}
+                    <span className="badge badge-warning mt-2">مطلوب</span>
                   </div>
                 ))}
               </div>

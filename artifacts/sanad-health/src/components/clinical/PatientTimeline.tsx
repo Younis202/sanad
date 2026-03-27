@@ -1,4 +1,4 @@
-interface Record {
+interface MedRecord {
   id: number;
   date: string;
   hospitalAr: string;
@@ -9,74 +9,102 @@ interface Record {
   type: string;
 }
 
-export default function PatientTimeline({ records }: { records: Record[] }) {
+const TYPE_MAP: Record<string, { label: string; badge: string; accent: string }> = {
+  emergency: { label: "طوارئ",  badge: "badge-critical", accent: "var(--critical-500)" },
+  inpatient: { label: "تنويم",  badge: "badge-warning",  accent: "var(--warning-500)"  },
+  outpatient:{ label: "عيادة",  badge: "badge-info",     accent: "var(--info-500)"     },
+};
+
+export default function PatientTimeline({ records }: { records: MedRecord[] }) {
   const sorted = [...records].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const typeStyle: Record<string, { bg: string; label: string; dot: string }> = {
-    emergency: { bg: "sanad-card-critical", label: "طوارئ", dot: "var(--color-critical)" },
-    inpatient:  { bg: "sanad-card-warning",  label: "تنويم",  dot: "var(--color-warning)"  },
-    outpatient: { bg: "sanad-card",           label: "عيادة",  dot: "var(--sanad-teal)"     },
-  };
-
   if (!sorted.length) {
     return (
-      <div className="text-center py-12 text-neutral-400 text-sm">
-        لا يوجد سجل طبي متاح
+      <div
+        className="card flex flex-col items-center justify-center py-16 text-center"
+        style={{ color: "var(--n-400)" }}
+      >
+        <svg viewBox="0 0 24 24" fill="none" width={32} height={32} className="mb-3">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+          <path d="M3 9h18M9 4v5M15 4v5M7 13h3M7 16h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+        <div className="text-small font-medium">لا يوجد سجل طبي</div>
+        <div className="text-caption mt-1">لم يتم رصد أي سجلات لهذا المريض</div>
       </div>
     );
   }
 
   return (
-    <div className="relative space-y-4 pr-6">
-      {/* Timeline spine */}
-      <div
-        className="absolute top-0 bottom-0 right-2.5 w-0.5"
-        style={{ background: "var(--neutral-200)" }}
-      />
-
-      {sorted.map((rec) => {
-        const style = typeStyle[rec.type] ?? typeStyle.outpatient;
+    <div className="space-y-0">
+      {sorted.map((rec, idx) => {
+        const cfg = TYPE_MAP[rec.type] ?? TYPE_MAP.outpatient;
         return (
-          <div key={rec.id} className="flex gap-4 items-start relative">
-            {/* dot */}
-            <div
-              className="absolute -right-3.5 top-4 w-3 h-3 rounded-full border-2 border-white flex-shrink-0 z-10"
-              style={{ background: style.dot }}
-            />
+          <div
+            key={rec.id}
+            className="flex gap-5 group"
+            style={{ paddingBottom: idx === sorted.length - 1 ? 0 : "2px" }}
+          >
+            {/* Timeline column */}
+            <div className="flex flex-col items-center" style={{ width: "20px", flexShrink: 0 }}>
+              <div
+                className="rounded-full flex-shrink-0"
+                style={{
+                  width: "10px",
+                  height: "10px",
+                  background: cfg.accent,
+                  border: "2px solid white",
+                  boxShadow: `0 0 0 1px ${cfg.accent}`,
+                  marginTop: "16px",
+                  zIndex: 1,
+                  flexShrink: 0,
+                }}
+              />
+              {idx < sorted.length - 1 && (
+                <div
+                  className="flex-1 mt-1"
+                  style={{ width: "1px", background: "var(--n-150)", minHeight: "24px" }}
+                />
+              )}
+            </div>
 
-            <div className={`${style.bg} p-4 rounded-xl flex-1 space-y-2 border border-neutral-100`}>
-              <div className="flex items-start justify-between gap-2 flex-wrap">
-                <div>
-                  <div className="font-bold text-neutral-800 text-sm">{rec.diagnosisAr}</div>
-                  <div className="text-xs text-neutral-500 mt-0.5">
-                    {rec.hospitalAr} — {rec.specialtyAr}
+            {/* Card */}
+            <div
+              className="card flex-1 mb-3 group-hover:shadow-md transition-shadow duration-150"
+              style={{ overflow: "hidden" }}
+            >
+              <div className="flex items-start justify-between gap-4 px-4 pt-4 pb-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="text-h4" style={{ color: "var(--n-900)" }}>
+                      {rec.diagnosisAr}
+                    </span>
+                    <span className={`badge ${cfg.badge}`}>{cfg.label}</span>
+                  </div>
+                  <div className="text-small" style={{ color: "var(--n-500)" }}>
+                    {rec.hospitalAr} · {rec.specialtyAr}
                   </div>
                 </div>
-                <div className="text-left flex-shrink-0 space-y-1">
-                  <div className="text-xs font-mono text-neutral-500">{rec.date}</div>
-                  <span
-                    className="badge text-[10px]"
-                    style={{
-                      background: style.dot,
-                      color: "white",
-                      display: "inline-flex",
-                    }}
+                <div className="text-left flex-shrink-0">
+                  <div
+                    className="font-mono text-small font-medium"
+                    style={{ color: "var(--n-700)" }}
                   >
-                    {style.label}
-                  </span>
+                    {rec.date}
+                  </div>
+                  <div className="text-caption mt-0.5" style={{ color: "var(--n-400)" }}>
+                    د. {rec.doctorName}
+                  </div>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2 text-xs text-neutral-500">
-                <span>👨‍⚕️ {rec.doctorName}</span>
-              </div>
-
               {rec.notes && (
-                <p className="text-xs text-neutral-600 border-t border-neutral-100 pt-2">
+                <div
+                  className="px-4 pb-4 text-small"
+                  style={{ color: "var(--n-500)", borderTop: "1px solid var(--n-100)", paddingTop: "10px" }}
+                >
                   {rec.notes}
-                </p>
+                </div>
               )}
             </div>
           </div>

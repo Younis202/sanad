@@ -1,156 +1,211 @@
 import { Link } from "wouter";
 
-const PROBLEMS = [
-  {
-    icon: "🚑",
-    title: "كارثة الطوارئ",
-    desc: "عندما يقع حادث، يصل المصاب للطوارئ مجهولاً طبياً. يضيع وقت حرج في تخمين فصيلة الدم والحساسية.",
-    severity: "critical",
-  },
-  {
-    icon: "💊",
-    title: "الأخطاء الدوائية",
-    desc: "طبيب لا يرى ما وصفه طبيب آخر. أدوية تتعارض كيميائياً وتدمر كلى المريض.",
-    severity: "warning",
-  },
-  {
-    icon: "💸",
-    title: "الهدر المالي الملياري",
-    desc: "المريض يعيد نفس التحاليل في كل مستشفى لأنه لا يوجد سجل يربط النتائج. مليارات هدراً.",
-    severity: "info",
-  },
-  {
-    icon: "📊",
-    title: "غياب الطب الوقائي",
-    desc: "لا يوجد نظام يراقب صحة المواطن ليُنبهه باقتراب إصابته بالسكري قبل حدوثه.",
-    severity: "neutral",
-  },
-];
+function ArrowIcon() {
+  return (
+    <svg viewBox="0 0 16 16" fill="none" width={14} height={14}>
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 14 14" fill="none" width={12} height={12}>
+      <circle cx="7" cy="7" r="6" fill="var(--success-500)"/>
+      <path d="M4.5 7l2 2 3-3" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
 
 const CONTEXTS = [
   {
     href: "/emergency",
-    icon: "🚑",
-    title: "واجهة المسعف",
-    subtitle: "Emergency Mode",
-    desc: "مسح الهوية وعرض البيانات الحرجة في أقل من ثانية واحدة. مُحمَّل على أجهزة الهلال الأحمر.",
-    color: "var(--color-critical)",
-    bg: "var(--color-critical-bg)",
-    border: "var(--color-critical-border)",
+    code: "CTX-01",
+    title: "واجهة الإسعاف",
+    en: "Emergency Interface",
+    desc: "مسح الهوية الوطنية واسترجاع البيانات الحرجة — فصيلة الدم، الحساسية، الأمراض المزمنة — في أقل من 200 مللي ثانية. مُحمَّل على أجهزة الهلال الأحمر.",
+    metrics: ["< 200ms استجابة", "بدون اتصال إنترنت", "HL7 FHIR مشفر"],
+    color: "var(--critical-600)",
+    bg: "var(--critical-50)",
+    border: "var(--critical-200)",
+    badge: "badge-critical",
+    badgeLabel: "EMERGENCY",
   },
   {
     href: "/clinical/dashboard",
-    icon: "🩺",
+    code: "CTX-02",
     title: "لوحة الطبيب السريرية",
-    subtitle: "Physician Dashboard",
-    desc: "السجل الطبي الموحد من كافة المستشفيات، كاشف التعارض الدوائي، وتحليل سَنَد الذكي.",
-    color: "var(--sanad-teal)",
-    bg: "var(--sanad-teal-light)",
-    border: "#a5f3fc",
+    en: "Physician Dashboard",
+    desc: "السجل الطبي الموحد من كافة المنشآت، كاشف التعارض الدوائي الآني، وتحليل سَنَد الذكي للمخاطر الاستباقية. قرار أفضل في وقت أقل.",
+    metrics: ["سجل موحد من 48+ منشأة", "AI Risk Analysis", "Drug Interaction Engine"],
+    color: "var(--brand-600)",
+    bg: "var(--brand-50)",
+    border: "var(--brand-200)",
+    badge: "badge-brand",
+    badgeLabel: "CLINICAL",
   },
   {
     href: "/citizen",
-    icon: "❤️",
-    title: "تطبيق المواطن",
-    subtitle: "Citizen App",
-    desc: "لوحة تحكم صحية شخصية، تنبيهات AI استباقية، وتصدير بطاقة صحية دولية مشفرة.",
-    color: "var(--color-success)",
-    bg: "var(--color-success-bg)",
-    border: "var(--color-success-border)",
+    code: "CTX-03",
+    title: "لوحة الصحة الشخصية",
+    en: "Citizen Dashboard",
+    desc: "المواطن يرى ملفه الصحي الكامل، مؤشره الصحي، تنبيهات الذكاء الاصطناعي الاستباقية، وتوصيات مخصصة — قبل أن تسوء حالته.",
+    metrics: ["مؤشر صحي شخصي", "تنبيهات AI استباقية", "تصدير بطاقة صحية دولية"],
+    color: "var(--success-600)",
+    bg: "var(--success-50)",
+    border: "var(--success-200)",
+    badge: "badge-success",
+    badgeLabel: "CITIZEN",
   },
   {
     href: "/national/dashboard",
-    icon: "🇸🇦",
+    code: "CTX-04",
     title: "لوحة التحكم الوطنية",
-    subtitle: "National Dashboard",
-    desc: "رؤية شاملة على مستوى المملكة — KPIs، إحصائيات، وتقارير للمسؤولين.",
+    en: "National Command Center",
+    desc: "رؤية استراتيجية شاملة على مستوى المملكة. KPIs في الوقت الفعلي، توزيع المخاطر الصحية، وتقارير تشغيلية للمسؤولين في وزارة الصحة وسدايا.",
+    metrics: ["KPIs فورية", "توزيع جغرافي", "تقارير وزارية"],
     color: "#7c3aed",
     bg: "#f5f3ff",
-    border: "#ddd6fe",
+    border: "#e9d5ff",
+    badge: "badge-neutral",
+    badgeLabel: "GOV",
   },
 ];
 
-const TECH = [
-  { label: "معيار الربط", value: "HL7 FHIR R4" },
-  { label: "الاستضافة", value: "STC Cloud (KSA)" },
-  { label: "التحقق", value: "نفاذ / Nafath" },
-  { label: "الأمن السيبراني", value: "NCA Compliant" },
-  { label: "الذكاء الاصطناعي", value: "Sanad AI Engine" },
-  { label: "البنية", value: "Modular Monolith" },
+const PROBLEMS = [
+  {
+    num: "01",
+    title: "عمى الطوارئ",
+    desc: "مريض في حالة حرجة — لا أحد يعرف فصيلة دمه، حساسيته، أو الأدوية التي يتناولها. قرارات تُتخذ في الظلام.",
+  },
+  {
+    num: "02",
+    title: "أخطاء دوائية قاتلة",
+    desc: "طبيب يصف دواء لا يعلم أن طبيباً آخر وصف ما يتعارض معه. تعارض كيميائي يدمر كلية المريض.",
+  },
+  {
+    num: "03",
+    title: "هدر مالي ملياري",
+    desc: "المريض يكرر نفس التحاليل في كل مستشفى لأنه لا توجد قاعدة بيانات موحدة. مليارات الريالات هدراً سنوياً.",
+  },
+  {
+    num: "04",
+    title: "غياب الطب الوقائي",
+    desc: "البيانات موجودة لكنها غير مُحللة. لا يوجد نظام يُنبه المواطن باقتراب إصابته بالسكري أو ارتفاع ضغط الدم.",
+  },
+];
+
+const STACK = [
+  { label: "معيار البيانات",   value: "HL7 FHIR R4" },
+  { label: "الاستضافة",        value: "STC Cloud — KSA" },
+  { label: "التحقق من الهوية", value: "Nafath / نفاذ" },
+  { label: "الأمن السيبراني", value: "NCA Compliant A+" },
+  { label: "تحليل البيانات",   value: "SDAIA Framework" },
+  { label: "محرك الذكاء",      value: "Sanad AI Engine" },
+  { label: "بنية النظام",      value: "Modular Monolith" },
+  { label: "تشفير البيانات",   value: "AES-256 + mTLS" },
 ];
 
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
+
       {/* Hero */}
       <section
-        className="relative px-8 py-20 text-white overflow-hidden"
-        style={{ background: "linear-gradient(135deg, #0c1a2e 0%, #0891b2 100%)" }}
+        style={{
+          background: "linear-gradient(160deg, var(--n-950) 0%, #0c2340 50%, #0a1e35 100%)",
+          borderBottom: "1px solid rgba(255,255,255,0.06)",
+          padding: "72px 48px",
+        }}
       >
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8"
-            style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.2)" }}
-          >
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            مبادرة رؤية 2030 للصحة الرقمية
+        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+          <div className="flex items-center gap-3 mb-8">
+            <div
+              className="rounded"
+              style={{ width: "6px", height: "6px", background: "var(--success-400)", animation: "pulse-slow 2s ease-in-out infinite" }}
+            />
+            <span className="text-caption" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "1px", textTransform: "uppercase" }}>
+              مبادرة رؤية 2030 · Vision 2030 Health Initiative
+            </span>
           </div>
-          <h1 className="text-6xl font-black leading-tight mb-4">
+
+          <div style={{ marginBottom: "12px" }}>
             <span
-              className="block text-7xl"
-              style={{ fontFamily: "'Cairo', sans-serif" }}
+              className="font-black"
+              style={{ fontSize: "72px", color: "white", letterSpacing: "-3px", lineHeight: 1 }}
             >
               سَنَد
             </span>
-            <span className="text-3xl font-bold opacity-90">
-              البنية التحتية الرقمية للصحة الوطنية
-            </span>
-          </h1>
-          <p className="text-xl opacity-80 max-w-2xl mx-auto leading-relaxed mb-10">
-            نحوّل "الهوية الوطنية السعودية" إلى مفتاح مشفر يربط جميع السجلات الطبية
-            في مكان واحد — لأن قرارات الحياة والموت تحتاج بيانات لحظية.
+          </div>
+          <div
+            className="font-bold"
+            style={{ fontSize: "24px", color: "rgba(255,255,255,0.65)", letterSpacing: "-0.5px", marginBottom: "24px" }}
+          >
+            البنية التحتية الرقمية للصحة الوطنية
+          </div>
+          <p
+            style={{
+              fontSize: "16px",
+              lineHeight: "1.8",
+              color: "rgba(255,255,255,0.5)",
+              maxWidth: "580px",
+              marginBottom: "40px",
+            }}
+          >
+            نحوّل رقم الهوية الوطنية إلى مفتاح مشفر يربط جميع السجلات الطبية عبر كافة المنشآت الصحية.
+            لأن قرارات الحياة والموت تحتاج بيانات لحظية — لا ورق.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link
-              href="/emergency"
-              className="px-8 py-4 rounded-2xl font-bold text-base transition-all hover:scale-105"
-              style={{ background: "var(--color-critical)", color: "white" }}
-            >
-              🚑 واجهة الإسعاف
+
+          <div className="flex gap-3 flex-wrap">
+            <Link href="/emergency" className="btn btn-danger btn-lg">
+              واجهة الإسعاف
+              <ArrowIcon />
             </Link>
             <Link
               href="/clinical/dashboard"
-              className="px-8 py-4 rounded-2xl font-bold text-base transition-all hover:scale-105"
-              style={{ background: "rgba(255,255,255,0.2)", border: "2px solid rgba(255,255,255,0.3)", color: "white" }}
+              className="btn btn-lg"
+              style={{
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                color: "white",
+              }}
             >
-              🩺 لوحة الطبيب
+              لوحة الطبيب
+              <ArrowIcon />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Problems */}
-      <section className="px-8 py-16 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-neutral-900 mb-2">
-              المشكلة التي نحلها
-            </h2>
-            <p className="text-neutral-500">القطاع الصحي السعودي — ميزانية 214 مليار ريال — يعاني من نزيف في البيانات والموارد</p>
+      <section style={{ padding: "64px 48px", background: "white", borderBottom: "1px solid var(--n-150)" }}>
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div className="text-label mb-2">المشكلة</div>
+          <div className="text-h1 mb-2" style={{ color: "var(--n-900)" }}>
+            القطاع الصحي يعاني من نزيف بياني
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {PROBLEMS.map((p, i) => (
+          <p className="text-body mb-10" style={{ color: "var(--n-400)", maxWidth: "520px" }}>
+            ميزانية 214 مليار ريال سنوياً — ومع ذلك طبيب لا يرى ما وصفه زميله، ومريض يعيد نفس الفحص في كل مستشفى.
+          </p>
+
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+            {PROBLEMS.map((p) => (
               <div
-                key={i}
-                className={`p-6 rounded-2xl ${
-                  p.severity === "critical" ? "sanad-card-critical" :
-                  p.severity === "warning" ? "sanad-card-warning" :
-                  p.severity === "info" ? "sanad-card-info" : "sanad-card"
-                }`}
+                key={p.num}
+                className="rounded-xl p-6"
+                style={{
+                  border: "1px solid var(--n-150)",
+                  background: "var(--n-25)",
+                }}
               >
-                <div className="text-3xl mb-3">{p.icon}</div>
-                <h3 className="text-lg font-bold text-neutral-900 mb-2">{p.title}</h3>
-                <p className="text-neutral-600 text-sm leading-relaxed">{p.desc}</p>
+                <div
+                  className="font-black font-mono mb-3"
+                  style={{ fontSize: "11px", color: "var(--n-300)", letterSpacing: "2px" }}
+                >
+                  {p.num}
+                </div>
+                <div className="text-h4 mb-2" style={{ color: "var(--n-900)" }}>{p.title}</div>
+                <p className="text-small" style={{ color: "var(--n-500)", lineHeight: "1.7" }}>{p.desc}</p>
               </div>
             ))}
           </div>
@@ -158,39 +213,63 @@ export default function HomePage() {
       </section>
 
       {/* 4 Contexts */}
-      <section className="px-8 py-16" style={{ background: "var(--neutral-50)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-neutral-900 mb-2">أربعة سياقات — نظام واحد</h2>
-            <p className="text-neutral-500">كل سياق مُصمَّم لمستخدم محدد بإمكانيات وصلاحيات مختلفة</p>
+      <section style={{ padding: "64px 48px", background: "var(--n-50)", borderBottom: "1px solid var(--n-150)" }}>
+        <div style={{ maxWidth: "960px", margin: "0 auto" }}>
+          <div className="text-label mb-2">الحل</div>
+          <div className="text-h1 mb-2" style={{ color: "var(--n-900)" }}>
+            أربعة سياقات — نظام واحد
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            {CONTEXTS.map((ctx, i) => (
+          <p className="text-body mb-10" style={{ color: "var(--n-400)", maxWidth: "480px" }}>
+            كل سياق مُصمَّم لمستخدم محدد بإمكانيات وصلاحيات مختلفة. هوية واحدة تفتح كل السجلات.
+          </p>
+
+          <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
+            {CONTEXTS.map((ctx) => (
               <Link
-                key={i}
+                key={ctx.href}
                 href={ctx.href}
-                className="p-6 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-0.5 block"
-                style={{ background: ctx.bg, borderColor: ctx.border }}
+                className="block rounded-xl p-6 transition-all duration-150 group"
+                style={{
+                  background: ctx.bg,
+                  border: `1px solid ${ctx.border}`,
+                  textDecoration: "none",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "var(--card-shadow-md)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; }}
               >
-                <div className="flex items-start gap-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-                    style={{ background: `${ctx.color}20` }}
-                  >
-                    {ctx.icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-bold text-neutral-900">{ctx.title}</h3>
-                      <span
-                        className="text-[10px] font-mono px-2 py-0.5 rounded-full"
-                        style={{ background: `${ctx.color}20`, color: ctx.color }}
-                      >
-                        {ctx.subtitle}
-                      </span>
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <div
+                      className="font-mono text-caption mb-1"
+                      style={{ color: ctx.color, letterSpacing: "1px" }}
+                    >
+                      {ctx.code}
                     </div>
-                    <p className="text-neutral-600 text-sm leading-relaxed">{ctx.desc}</p>
+                    <div className="text-h3" style={{ color: "var(--n-900)" }}>{ctx.title}</div>
+                    <div className="text-caption" style={{ color: "var(--n-400)" }}>{ctx.en}</div>
                   </div>
+                  <span className={`badge ${ctx.badge}`}>{ctx.badgeLabel}</span>
+                </div>
+
+                <p className="text-small mb-4" style={{ color: "var(--n-500)", lineHeight: "1.7" }}>
+                  {ctx.desc}
+                </p>
+
+                <div className="space-y-1.5">
+                  {ctx.metrics.map((m) => (
+                    <div key={m} className="flex items-center gap-2">
+                      <CheckIcon />
+                      <span className="text-small font-medium" style={{ color: "var(--n-600)" }}>{m}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  className="flex items-center gap-1.5 mt-4 text-small font-semibold transition-all"
+                  style={{ color: ctx.color }}
+                >
+                  <span>فتح السياق</span>
+                  <ArrowIcon />
                 </div>
               </Link>
             ))}
@@ -199,17 +278,24 @@ export default function HomePage() {
       </section>
 
       {/* Tech Stack */}
-      <section className="px-8 py-16 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-black text-neutral-900 mb-2">الهندسة التقنية السيادية</h2>
-            <p className="text-neutral-500">مُصمَّم لتكون سيادية 100% — لقبول سدايا ووزارة الصحة</p>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {TECH.map((t, i) => (
-              <div key={i} className="sanad-card p-5 rounded-2xl">
-                <div className="text-xs text-neutral-400 mb-1">{t.label}</div>
-                <div className="font-bold text-neutral-800">{t.value}</div>
+      <section style={{ padding: "64px 48px", background: "white" }}>
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div className="text-label mb-2">البنية التقنية</div>
+          <div className="text-h1 mb-2" style={{ color: "var(--n-900)" }}>هندسة سيادية 100%</div>
+          <p className="text-body mb-10" style={{ color: "var(--n-400)", maxWidth: "480px" }}>
+            مُصمَّم ليتجاوز معايير سدايا، هيئة الاتصالات، والهيئة الوطنية للأمن السيبراني.
+            لا cloud أجنبي. لا بيانات خارج المملكة.
+          </p>
+
+          <div className="grid gap-3" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+            {STACK.map((s) => (
+              <div
+                key={s.label}
+                className="rounded-xl p-4"
+                style={{ border: "1px solid var(--n-150)", background: "var(--n-25)" }}
+              >
+                <div className="text-label mb-1.5" style={{ color: "var(--n-300)" }}>{s.label}</div>
+                <div className="font-bold text-small" style={{ color: "var(--n-800)" }}>{s.value}</div>
               </div>
             ))}
           </div>
@@ -218,11 +304,24 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer
-        className="px-8 py-6 text-center text-sm text-white"
-        style={{ background: "#0c1a2e" }}
+        className="px-12 py-8 flex items-center justify-between"
+        style={{
+          background: "var(--n-950)",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          marginTop: "auto",
+        }}
       >
-        <div className="font-bold text-lg mb-1">سَنَد</div>
-        <div className="opacity-60">المنظومة الصحية الوطنية السعودية — وثيقة سرية للمؤسسين</div>
+        <div>
+          <div className="font-black" style={{ fontSize: "18px", color: "white", letterSpacing: "-0.5px" }}>
+            سَنَد
+          </div>
+          <div className="text-caption mt-1" style={{ color: "rgba(255,255,255,0.25)" }}>
+            SANAD · National Digital Health Infrastructure
+          </div>
+        </div>
+        <div className="text-caption" style={{ color: "rgba(255,255,255,0.2)" }}>
+          وثيقة سرية للمؤسسين — Confidential Founders Document
+        </div>
       </footer>
     </div>
   );

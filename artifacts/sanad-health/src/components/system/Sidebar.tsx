@@ -1,61 +1,77 @@
 import { Link, useLocation } from "wouter";
 
-const NAV = [
+interface NavItem {
+  href: string;
+  labelAr: string;
+  labelEn: string;
+  badge?: string;
+  badgeStyle?: React.CSSProperties;
+  icon: React.ReactNode;
+}
+
+const NAV: NavItem[] = [
   {
-    label: "الرئيسية",
     href: "/",
+    labelAr: "الرئيسية",
+    labelEn: "Overview",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
+      <svg viewBox="0 0 16 16" fill="none" className="nav-icon">
+        <path d="M2 6.5L8 2l6 4.5V14a.5.5 0 0 1-.5.5h-3.75V10h-3.5v4.5H2.5A.5.5 0 0 1 2 14V6.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
       </svg>
     ),
   },
   {
-    label: "الإسعاف",
     href: "/emergency",
+    labelAr: "واجهة الإسعاف",
+    labelEn: "Emergency",
+    badge: "EMERGENCY",
+    badgeStyle: { background: "rgba(225,29,72,0.2)", color: "#fb7185", border: "1px solid rgba(225,29,72,0.3)" },
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      <svg viewBox="0 0 16 16" fill="none" className="nav-icon">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M8 1.5v13M1.5 8h13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
-    badge: "طوارئ",
-    badgeColor: "badge-critical",
   },
   {
-    label: "الطبيب",
     href: "/clinical/dashboard",
+    labelAr: "لوحة الطبيب",
+    labelEn: "Clinical",
+    badge: "CLINICAL",
+    badgeStyle: { background: "rgba(37,99,235,0.2)", color: "#60a5fa", border: "1px solid rgba(37,99,235,0.3)" },
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
+      <svg viewBox="0 0 16 16" fill="none" className="nav-icon">
+        <circle cx="8" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
     ),
-    badge: "سريري",
-    badgeColor: "badge-info",
   },
   {
-    label: "المواطن",
     href: "/citizen",
+    labelAr: "صحة المواطن",
+    labelEn: "Citizen",
+    badge: "CITIZEN",
+    badgeStyle: { background: "rgba(22,163,74,0.2)", color: "#4ade80", border: "1px solid rgba(22,163,74,0.3)" },
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/>
+      <svg viewBox="0 0 16 16" fill="none" className="nav-icon">
+        <path d="M8 13.5c-4 0-6-2-6-5.5C2 4.5 4.686 2 8 2s6 2.5 6 6c0 3.5-2 5.5-6 5.5z" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M5.5 8h5M8 5.5v5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
       </svg>
     ),
-    badge: "صحتي",
-    badgeColor: "badge-success",
   },
   {
-    label: "الإدارة الوطنية",
     href: "/national/dashboard",
+    labelAr: "التحكم الوطني",
+    labelEn: "National",
+    badge: "GOV",
+    badgeStyle: { background: "rgba(255,255,255,0.07)", color: "#8b98b0", border: "1px solid rgba(255,255,255,0.1)" },
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5">
-        <rect width="20" height="14" x="2" y="3" rx="2"/>
-        <path d="M8 21h8M12 17v4"/>
+      <svg viewBox="0 0 16 16" fill="none" className="nav-icon">
+        <rect x="1.5" y="4" width="13" height="10" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M5 4V2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5V4" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M4 8h2M7 8h5M4 10.5h3M9 10.5h3" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
       </svg>
     ),
-    badge: "وطني",
-    badgeColor: "badge-neutral",
   },
 ];
 
@@ -64,25 +80,50 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="w-64 flex-shrink-0 bg-white border-l border-neutral-200 flex flex-col"
-      style={{ minHeight: "100vh" }}
+      className="flex flex-col flex-shrink-0 select-none"
+      style={{
+        width: "240px",
+        minHeight: "100vh",
+        background: "var(--sidebar-bg)",
+        borderLeft: "1px solid var(--sidebar-border)",
+      }}
     >
       {/* Logo */}
-      <div className="px-6 py-5 border-b border-neutral-100 flex items-center gap-3">
+      <div
+        className="flex items-center gap-3 px-5 py-5"
+        style={{ borderBottom: "1px solid var(--sidebar-border)" }}
+      >
         <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg"
-          style={{ background: "var(--sanad-teal)" }}
+          className="flex items-center justify-center font-black text-white flex-shrink-0"
+          style={{
+            width: "34px",
+            height: "34px",
+            background: "linear-gradient(135deg, var(--brand-500), var(--brand-700))",
+            borderRadius: "8px",
+            fontSize: "16px",
+          }}
         >
           س
         </div>
         <div>
-          <div className="font-bold text-neutral-900 text-base">سَنَد</div>
-          <div className="text-xs text-neutral-400">المنظومة الصحية الوطنية</div>
+          <div style={{ color: "rgba(255,255,255,0.92)", fontSize: "15px", fontWeight: 700, letterSpacing: "-0.3px" }}>
+            سَنَد
+          </div>
+          <div style={{ fontSize: "11px", color: "var(--sidebar-text-dim)", letterSpacing: "0.3px" }}>
+            SANAD Health OS
+          </div>
         </div>
       </div>
 
+      {/* Label */}
+      <div className="px-5 pt-5 pb-2">
+        <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.6px", textTransform: "uppercase", color: "var(--sidebar-text-dim)" }}>
+          السياقات
+        </span>
+      </div>
+
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 px-3 space-y-0.5">
         {NAV.map((item) => {
           const active =
             item.href === "/"
@@ -92,18 +133,31 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
-                active
-                  ? "bg-blue-50 text-cyan-700"
-                  : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
-              }`}
+              className={`nav-item ${active ? "active" : ""}`}
             >
-              <span className={active ? "text-cyan-600" : "text-neutral-400"}>
-                {item.icon}
-              </span>
-              <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className={`badge text-[10px] px-2 py-0.5 ${item.badgeColor}`}>
+              {item.icon}
+              <div className="flex-1 min-w-0">
+                <div style={{ fontSize: "13px", fontWeight: active ? 600 : 500 }}>
+                  {item.labelAr}
+                </div>
+                <div style={{ fontSize: "11px", color: active ? "rgba(34,211,238,0.6)" : "var(--sidebar-text-dim)", marginTop: "1px" }}>
+                  {item.labelEn}
+                </div>
+              </div>
+              {item.badge && item.badgeStyle && (
+                <span
+                  style={{
+                    ...item.badgeStyle,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    letterSpacing: "0.4px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {item.badge}
                 </span>
               )}
@@ -112,21 +166,32 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* System info */}
-      <div className="p-4 border-t border-neutral-100">
-        <div className="sanad-card p-3 text-xs text-neutral-500 space-y-1">
+      {/* System Status */}
+      <div className="px-4 py-4" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
+        <div
+          className="rounded-lg p-3 space-y-2.5"
+          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid var(--sidebar-border)" }}
+        >
           <div className="flex items-center justify-between">
-            <span>حالة النظام</span>
-            <span className="badge badge-success text-[10px]">نشط</span>
+            <span style={{ fontSize: "11px", color: "var(--sidebar-text-dim)" }}>System Status</span>
+            <div className="flex items-center gap-1.5">
+              <div
+                className="rounded-full"
+                style={{ width: "6px", height: "6px", background: "var(--success-500)", animation: "pulse-slow 2s ease-in-out infinite" }}
+              />
+              <span style={{ fontSize: "11px", color: "var(--success-400)" }}>Operational</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span>المعيار</span>
-            <span className="font-mono text-neutral-400">HL7 FHIR R4</span>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>التشفير</span>
-            <span className="font-mono text-neutral-400">NCA Compliant</span>
-          </div>
+          {[
+            { label: "HL7 FHIR", value: "R4" },
+            { label: "NCA", value: "Compliant" },
+            { label: "Uptime", value: "99.97%" },
+          ].map((s) => (
+            <div key={s.label} className="flex items-center justify-between">
+              <span style={{ fontSize: "11px", color: "var(--sidebar-text-dim)" }}>{s.label}</span>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "var(--sidebar-text)" }}>{s.value}</span>
+            </div>
+          ))}
         </div>
       </div>
     </aside>

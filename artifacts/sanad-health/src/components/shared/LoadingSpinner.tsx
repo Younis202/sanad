@@ -1,14 +1,21 @@
 export default function LoadingSpinner({ label }: { label?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center py-20 gap-4">
+    <div className="flex flex-col items-center justify-center py-24 gap-4">
       <div
-        className="w-10 h-10 rounded-full border-4 border-neutral-200"
         style={{
-          borderTopColor: "var(--sanad-teal)",
-          animation: "spin 0.8s linear infinite",
+          width: "28px",
+          height: "28px",
+          border: "2px solid var(--n-150)",
+          borderTopColor: "var(--brand-500)",
+          borderRadius: "50%",
+          animation: "spin 0.7s linear infinite",
         }}
       />
-      {label && <p className="text-sm text-neutral-500">{label}</p>}
+      {label && (
+        <p className="text-small" style={{ color: "var(--n-400)" }}>
+          {label}
+        </p>
+      )}
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
