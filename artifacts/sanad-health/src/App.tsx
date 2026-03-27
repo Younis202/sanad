@@ -11,9 +11,28 @@ const base = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
 export default function App() {
   return (
     <Router base={base}>
-      <div className="flex min-h-screen" style={{ direction: "rtl" }}>
+      <div
+        style={{
+          display: "flex",
+          minHeight: "100vh",
+          direction: "rtl",
+          background: "var(--surface-base)",
+          padding: "16px",
+          gap: "16px",
+          alignItems: "flex-start",
+        }}
+      >
         <Sidebar />
-        <main className="flex-1 flex flex-col overflow-x-hidden min-w-0">
+        <main
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            overflowX: "hidden",
+            minWidth: 0,
+            minHeight: "calc(100vh - 32px)",
+          }}
+        >
           <Switch>
             <Route path="/" component={HomePage} />
             <Route path="/emergency" component={EmergencyContext} />

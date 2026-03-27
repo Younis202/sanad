@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -18,11 +19,11 @@
   --sanad-blue-ring:  rgba(0, 51, 255, 0.18);
 
   /* --- Surfaces (Glassmorphism) --- */
-  --surface-base:  #F0F4FF;
-  --surface-high:  rgba(255, 255, 255, 0.75);
-  --surface-glass: rgba(255, 255, 255, 0.55);
-  --surface-ultra: rgba(255, 255, 255, 0.92);
-  --surface-tint:  rgba(0, 51, 255, 0.04);
+  --surface-base:  #f7f9fb;
+  --surface-high:  rgba(255, 255, 255, 0.80);
+  --surface-glass: rgba(255, 255, 255, 0.60);
+  --surface-ultra: rgba(255, 255, 255, 0.95);
+  --surface-tint:  rgba(0, 36, 193, 0.04);
 
   /* --- Neutrals --- */
   --n-0:   #ffffff;
@@ -112,14 +113,14 @@
   /* --- Extra neutrals --- */
   --n-25: #FAFBFF;
 
-  /* --- Sidebar --- */
-  --sidebar-bg:         rgba(0, 25, 60, 0.92);
-  --sidebar-border:     rgba(255, 255, 255, 0.08);
-  --sidebar-text:       rgba(255, 255, 255, 0.60);
-  --sidebar-text-dim:   rgba(255, 255, 255, 0.30);
-  --sidebar-hover-bg:   rgba(255, 255, 255, 0.07);
-  --sidebar-active-bg:  rgba(0, 51, 255, 0.20);
-  --sidebar-active-text: #FFFFFF;
+  /* --- Sidebar (light floating glass) --- */
+  --sidebar-bg:          rgba(255, 255, 255, 0.65);
+  --sidebar-border:      rgba(203, 213, 239, 0.55);
+  --sidebar-text:        #444657;
+  --sidebar-text-dim:    #747689;
+  --sidebar-hover-bg:    rgba(0, 36, 193, 0.06);
+  --sidebar-active-bg:   #0024c1;
+  --sidebar-active-text: #ffffff;
 
   /* Tailwind compat */
   --background:        220 20% 97%;
@@ -180,9 +181,9 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0, 51, 255, 0.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(0, 51, 255, 0.05) 0%, transparent 60%),
-    #F0F4FF;
+    radial-gradient(ellipse 80% 60% at 20% -10%, rgba(0, 36, 193, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 100%, rgba(0, 36, 193, 0.04) 0%, transparent 60%),
+    #f7f9fb;
   background-attachment: fixed;
 }
 
@@ -635,30 +636,36 @@ body {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
+  gap: 12px;
+  padding: 11px 14px;
   border-radius: var(--r-lg);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 500;
   color: var(--sidebar-text);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
   position: relative;
+  letter-spacing: 0.1px;
 }
 
 .nav-item:hover {
   background: var(--sidebar-hover-bg);
-  color: rgba(255, 255, 255, 0.90);
+  color: var(--n-800);
+  transform: translateX(-2px);
 }
 
 .nav-item.active {
   background: var(--sidebar-active-bg);
   color: var(--sidebar-active-text);
+  box-shadow: 0 4px 16px rgba(0, 36, 193, 0.28);
+  transform: none;
 }
 
-.nav-icon { flex-shrink: 0; width: 16px; height: 16px; opacity: 0.65; }
-.nav-item:hover .nav-icon { opacity: 1; }
+.nav-item.active:hover { transform: none; }
+
+.nav-icon { flex-shrink: 0; width: 18px; height: 18px; opacity: 0.55; }
+.nav-item:hover .nav-icon { opacity: 0.85; }
 .nav-item.active .nav-icon { opacity: 1; }
 
 /* ==========================================================================

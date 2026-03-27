@@ -6,6 +6,7 @@ interface NavItem {
   labelEn: string;
   badge?: string;
   badgeColor?: string;
+  badgeBg?: string;
   icon: React.ReactNode;
 }
 
@@ -15,8 +16,9 @@ const NAV: NavItem[] = [
     labelAr: "الرئيسية",
     labelEn: "Overview",
     icon: (
-      <svg viewBox="0 0 18 18" fill="none" className="nav-icon" width={18} height={18}>
-        <path d="M3 7.5L9 3l6 4.5V15a.75.75 0 0 1-.75.75H12v-4.5h-3V15.75H3.75A.75.75 0 0 1 3 15V7.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/>
+      <svg viewBox="0 0 20 20" fill="none" className="nav-icon" width={20} height={20}>
+        <path d="M3 8.5L10 3l7 5.5V17a.75.75 0 0 1-.75.75H13.5v-5h-3v5H3.75A.75.75 0 0 1 3 17V8.5z"
+          stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
       </svg>
     ),
   },
@@ -25,11 +27,12 @@ const NAV: NavItem[] = [
     labelAr: "واجهة الإسعاف",
     labelEn: "Emergency",
     badge: "LIVE",
-    badgeColor: "#EF4444",
+    badgeColor: "#dc2626",
+    badgeBg: "rgba(220,38,38,0.08)",
     icon: (
-      <svg viewBox="0 0 18 18" fill="none" className="nav-icon" width={18} height={18}>
-        <circle cx="9" cy="9" r="7.25" stroke="currentColor" strokeWidth="1.3"/>
-        <path d="M9 5.5v7M5.5 9h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <svg viewBox="0 0 20 20" fill="none" className="nav-icon" width={20} height={20}>
+        <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M10 6v8M6 10h8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -38,11 +41,12 @@ const NAV: NavItem[] = [
     labelAr: "لوحة الطبيب",
     labelEn: "Clinical",
     badge: "AI",
-    badgeColor: "#0033FF",
+    badgeColor: "#0024c1",
+    badgeBg: "rgba(0,36,193,0.08)",
     icon: (
-      <svg viewBox="0 0 18 18" fill="none" className="nav-icon" width={18} height={18}>
-        <circle cx="9" cy="6" r="3.25" stroke="currentColor" strokeWidth="1.3"/>
-        <path d="M2.5 16c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <svg viewBox="0 0 20 20" fill="none" className="nav-icon" width={20} height={20}>
+        <circle cx="10" cy="7" r="3.5" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M3 18c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -52,10 +56,12 @@ const NAV: NavItem[] = [
     labelEn: "Citizen",
     badge: "هـ",
     badgeColor: "#059669",
+    badgeBg: "rgba(5,150,105,0.08)",
     icon: (
-      <svg viewBox="0 0 18 18" fill="none" className="nav-icon" width={18} height={18}>
-        <path d="M9 15.5C4.858 15.5 2.5 13.5 2.5 9.5 2.5 5.5 5.41 2.5 9 2.5s6.5 3 6.5 7c0 4-2.358 6-6.5 6z" stroke="currentColor" strokeWidth="1.3"/>
-        <path d="M6.5 9h5M9 6.5v5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+      <svg viewBox="0 0 20 20" fill="none" className="nav-icon" width={20} height={20}>
+        <path d="M10 17C5.858 17 3.5 15 3.5 11 3.5 6.5 6.41 3 10 3s6.5 3.5 6.5 8c0 4-2.358 6-6.5 6z"
+          stroke="currentColor" strokeWidth="1.4" />
+        <path d="M7.5 10h5M10 7.5v5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -64,12 +70,13 @@ const NAV: NavItem[] = [
     labelAr: "التحكم الوطني",
     labelEn: "National",
     badge: "GOV",
-    badgeColor: "#7C3AED",
+    badgeColor: "#7c3aed",
+    badgeBg: "rgba(124,58,237,0.08)",
     icon: (
-      <svg viewBox="0 0 18 18" fill="none" className="nav-icon" width={18} height={18}>
-        <rect x="2" y="5" width="14" height="11" rx="1.5" stroke="currentColor" strokeWidth="1.3"/>
-        <path d="M6 5V3.5A.5.5 0 0 1 6.5 3h5a.5.5 0 0 1 .5.5V5" stroke="currentColor" strokeWidth="1.3"/>
-        <path d="M5 9h2.5M9.5 9h3.5M5 12h3.5M10.5 12h2.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
+      <svg viewBox="0 0 20 20" fill="none" className="nav-icon" width={20} height={20}>
+        <rect x="2.5" y="6" width="15" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M7 6V4.5A.5.5 0 0 1 7.5 4h5a.5.5 0 0 1 .5.5V6" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M5.5 10.5h3M11 10.5h3.5M5.5 14h4M12 14h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -80,59 +87,78 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="flex flex-col flex-shrink-0 select-none"
       style={{
         width: "248px",
-        minHeight: "100vh",
-        background: "var(--sidebar-bg)",
+        minWidth: "248px",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: "28px",
+        background: "rgba(255, 255, 255, 0.68)",
         backdropFilter: "blur(40px) saturate(180%)",
         WebkitBackdropFilter: "blur(40px) saturate(180%)",
-        borderLeft: "1px solid var(--sidebar-border)",
+        border: "1px solid rgba(255, 255, 255, 0.90)",
+        boxShadow: "0 8px 40px rgba(0, 36, 193, 0.07), 0 2px 12px rgba(0, 0, 0, 0.04)",
+        position: "sticky",
+        top: "16px",
+        maxHeight: "calc(100vh - 32px)",
+        overflowY: "auto",
+        overflowX: "hidden",
+        scrollbarWidth: "none",
       }}
     >
       {/* Logo */}
       <div
-        className="flex items-center gap-3 px-5 py-5"
-        style={{ borderBottom: "1px solid var(--sidebar-border)" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          padding: "22px 20px 18px",
+          borderBottom: "1px solid rgba(203, 213, 239, 0.45)",
+        }}
       >
         <div
-          className="flex items-center justify-center font-black text-white flex-shrink-0"
           style={{
-            width: "38px",
-            height: "38px",
+            width: "40px",
+            height: "40px",
+            borderRadius: "14px",
             background: "linear-gradient(135deg, #0033FF 0%, #0055FF 100%)",
-            borderRadius: "12px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             fontSize: "17px",
-            boxShadow: "0 4px 16px rgba(0, 51, 255, 0.45)",
+            fontWeight: 900,
+            color: "#fff",
+            flexShrink: 0,
+            boxShadow: "0 4px 16px rgba(0, 51, 255, 0.35)",
           }}
         >
           س
         </div>
         <div>
-          <div style={{ color: "rgba(255,255,255,0.95)", fontSize: "16px", fontWeight: 800, letterSpacing: "-0.4px" }}>
+          <div style={{ fontSize: "16px", fontWeight: 800, color: "#191c1e", letterSpacing: "-0.4px", lineHeight: 1.2 }}>
             سَنَد
           </div>
-          <div style={{ fontSize: "10.5px", color: "var(--sidebar-text-dim)", letterSpacing: "0.5px", marginTop: "1px" }}>
+          <div style={{ fontSize: "10.5px", color: "#747689", letterSpacing: "0.5px", marginTop: "2px", fontWeight: 500 }}>
             SANAD Health OS
           </div>
         </div>
       </div>
 
-      {/* Section Label */}
-      <div className="px-5 pt-6 pb-2">
+      {/* Section label */}
+      <div style={{ padding: "18px 20px 8px" }}>
         <span style={{
           fontSize: "10px",
           fontWeight: 700,
           letterSpacing: "1.4px",
           textTransform: "uppercase",
-          color: "var(--sidebar-text-dim)",
+          color: "#747689",
         }}>
           السياقات
         </span>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav style={{ flex: 1, padding: "0 10px", display: "flex", flexDirection: "column", gap: "2px" }}>
         {NAV.map((item) => {
           const active =
             item.href === "/"
@@ -143,46 +169,40 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={`nav-item ${active ? "active" : ""}`}
-              style={{
-                ...(active && {
-                  background: "rgba(0, 51, 255, 0.18)",
-                  boxShadow: "inset 0 0 0 1px rgba(0, 51, 255, 0.25)",
-                }),
-              }}
             >
               {item.icon}
-              <div className="flex-1 min-w-0">
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{
                   fontSize: "13.5px",
                   fontWeight: active ? 700 : 500,
-                  color: active ? "#fff" : "rgba(255,255,255,0.65)",
+                  color: active ? "#fff" : "#444657",
+                  lineHeight: 1.3,
                 }}>
                   {item.labelAr}
                 </div>
                 <div style={{
                   fontSize: "11px",
-                  color: active ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.28)",
+                  color: active ? "rgba(255,255,255,0.55)" : "#c4c5da",
                   marginTop: "1px",
+                  fontWeight: 400,
                 }}>
                   {item.labelEn}
                 </div>
               </div>
               {item.badge && (
-                <span
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "2px 7px",
-                    borderRadius: "99px",
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    letterSpacing: "0.3px",
-                    whiteSpace: "nowrap",
-                    background: `${item.badgeColor}22`,
-                    color: item.badgeColor,
-                    border: `1px solid ${item.badgeColor}33`,
-                  }}
-                >
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "2px 7px",
+                  borderRadius: "99px",
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  letterSpacing: "0.3px",
+                  whiteSpace: "nowrap",
+                  background: active ? "rgba(255,255,255,0.18)" : item.badgeBg,
+                  color: active ? "#fff" : item.badgeColor,
+                  border: active ? "1px solid rgba(255,255,255,0.25)" : `1px solid ${item.badgeColor}33`,
+                }}>
                   {item.badge}
                 </span>
               )}
@@ -191,31 +211,31 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* System Status */}
-      <div className="px-4 py-4" style={{ borderTop: "1px solid var(--sidebar-border)" }}>
-        <div
-          className="rounded-2xl p-3 space-y-2.5"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.08)",
-          }}
-        >
-          <div className="flex items-center justify-between">
-            <span style={{ fontSize: "10.5px", color: "rgba(255,255,255,0.35)", fontWeight: 600, letterSpacing: "0.3px" }}>
+      {/* System status */}
+      <div style={{ padding: "16px 14px 20px", borderTop: "1px solid rgba(203, 213, 239, 0.45)" }}>
+        <div style={{
+          borderRadius: "16px",
+          padding: "14px",
+          background: "rgba(247, 249, 251, 0.80)",
+          border: "1px solid rgba(196, 197, 218, 0.35)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontSize: "10.5px", color: "#747689", fontWeight: 600, letterSpacing: "0.3px" }}>
               System Status
             </span>
-            <div className="flex items-center gap-1.5">
-              <div
-                className="rounded-full"
-                style={{
-                  width: "6px",
-                  height: "6px",
-                  background: "#10B981",
-                  boxShadow: "0 0 8px #10B981",
-                  animation: "pulse-soft 2.5s ease-in-out infinite",
-                }}
-              />
-              <span style={{ fontSize: "10.5px", color: "#34D399", fontWeight: 600 }}>Operational</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+              <div style={{
+                width: "6px",
+                height: "6px",
+                borderRadius: "50%",
+                background: "#10B981",
+                boxShadow: "0 0 7px #10B981",
+                animation: "pulse-soft 2.5s ease-in-out infinite",
+              }} />
+              <span style={{ fontSize: "10.5px", color: "#059669", fontWeight: 600 }}>Operational</span>
             </div>
           </div>
           {[
@@ -223,9 +243,11 @@ export default function Sidebar() {
             { label: "NCA", value: "Compliant" },
             { label: "Uptime", value: "99.97%" },
           ].map((s) => (
-            <div key={s.label} className="flex items-center justify-between">
-              <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.28)" }}>{s.label}</span>
-              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>{s.value}</span>
+            <div key={s.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <span style={{ fontSize: "11px", color: "#c4c5da" }}>{s.label}</span>
+              <span style={{ fontSize: "11px", fontFamily: "var(--font-mono)", color: "#444657", fontWeight: 600 }}>
+                {s.value}
+              </span>
             </div>
           ))}
         </div>
