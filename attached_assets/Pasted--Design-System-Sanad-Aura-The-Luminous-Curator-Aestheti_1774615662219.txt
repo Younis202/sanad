@@ -1,0 +1,86 @@
+# Design System: Sanad Aura
+## The "Luminous Curator" Aesthetic Guide
+
+This document defines the visual and technical foundations for the **Sanad National Health Intelligence Infrastructure**. It is designed to convey sovereignty, trust, and high-fidelity intelligence.
+
+---
+
+### 1. The Creative North Star: "The Luminous Curator"
+Sanad rejects the flat, "utility-only" aesthetic of standard medical software. It is a **Decision System**, not a Data System. The visual language uses depth, light, and transparency to guide the eye toward critical life-saving actions.
+
+---
+
+### 2. Core Visual Principles
+*   **Depth & Glassmorphism:** Use of `backdrop-blur` and translucent white/blue surfaces to create a sense of light-weight sophistication.
+*   **Smooth Rounding:** A universal corner radius of **32px** for primary cards and **round-full** for buttons to emulate the premium feel of modern iOS interfaces.
+*   **Forensic Typography:** Clear hierarchy with wide tracking for headers to ensure legibility under high-stress clinical environments.
+*   **Decision-Centric Color:** Every color represents a clinical state, not just a decoration.
+
+---
+
+### 3. Color Palette (Tailwind Tokens)
+| Role | Color Name | Hex Code | Tailwind Class |
+| :--- | :--- | :--- | :--- |
+| **Primary (National)** | Royal Sanad Blue | `#0033FF` | `bg-blue-600` / `text-blue-600` |
+| **Secondary (Trust)** | Midnight Navy | `#00193C` | `bg-slate-900` |
+| **Surface (High)** | Crystal Glass | `rgba(255, 255, 255, 0.7)` | `bg-white/70 backdrop-blur-3xl` |
+| **Surface (Base)** | Aura Grey | `#F8FAFC` | `bg-slate-50` |
+| **Critical** | Heart Red | `#EF4444` | `bg-red-500` |
+| **Warning** | Pulse Orange | `#F59E0B` | `bg-amber-500` |
+| **Success** | Vital Green | `#10B981` | `bg-emerald-500` |
+
+---
+
+### 4. Typography (Inter / Public Sans)
+*   **H1 (National Level):** `text-4xl font-black tracking-tighter text-slate-900`
+*   **H2 (Clinical Context):** `text-2xl font-bold tracking-tight text-slate-800`
+*   **Label (Institutional):** `text-xs font-bold uppercase tracking-widest text-slate-500`
+*   **Body (Readability):** `text-base font-medium leading-relaxed text-slate-600`
+
+---
+
+### 5. Tailwind Configuration Snippet
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      borderRadius: {
+        'sanad': '32px',
+      },
+      backdropBlur: {
+        'sanad': '40px',
+      },
+      colors: {
+        sanad: {
+          blue: '#0033FF',
+          navy: '#00193C',
+          slate: '#F8FAFC',
+        }
+      },
+      boxShadow: {
+        'sanad-soft': '0 8px 32px 0 rgba(0, 0, 0, 0.04)',
+        'sanad-deep': '0 20px 50px rgba(0, 51, 255, 0.08)',
+      }
+    }
+  }
+}
+```
+
+---
+
+### 6. Component Architecture (The "Sanad" Way)
+1.  **The Priority Strip:** A full-width banner for critical alerts (e.g., Penicillin Allergy).
+2.  **The Clinical Card:** White/70 background, 32px rounding, subtle 1px border.
+3.  **The Decision Sidebar:** A dedicated vertical space for AI Insights and Actions.
+4.  **The Audit Footer:** Persistent text showing data source and timestamps to build trust.
+
+---
+
+### 7. Implementation Guidelines
+*   **Don't** use sharp corners.
+*   **Don't** use high-saturation backgrounds for content areas.
+*   **Always** provide a "Source" for data.
+*   **Always** prioritize "Decision" over "Display".
+
+---
+*Created by the Sanad Engineering Architecture Team*
