@@ -97,6 +97,21 @@
   --card-shadow: var(--shadow-card);
   --card-shadow-md: var(--shadow-deep);
 
+  /* --- Brand aliases (= Sanad Blue) --- */
+  --brand-50:  #EEF2FF;
+  --brand-100: #E0E7FF;
+  --brand-200: #C7D2FE;
+  --brand-300: #A5B4FC;
+  --brand-400: #818CF8;
+  --brand-500: #0033FF;
+  --brand-600: #0029CC;
+  --brand-700: #001FA3;
+  --brand-800: #001580;
+  --brand-900: #000C52;
+
+  /* --- Extra neutrals --- */
+  --n-25: #FAFBFF;
+
   /* --- Sidebar --- */
   --sidebar-bg:         rgba(0, 25, 60, 0.92);
   --sidebar-border:     rgba(255, 255, 255, 0.08);
